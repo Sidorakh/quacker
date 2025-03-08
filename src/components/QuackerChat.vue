@@ -10,9 +10,21 @@
         Quacker
       </v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>mdi-cog</v-icon>
-        </v-btn>
+      <v-menu>
+        <template v-slot:activator="{props}">
+          <v-btn icon v-bind="props">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+            <v-list-item @click="export_chat">
+              <v-list-item-title> Export chat </v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="show_options_dialog=true">
+              <v-list-item-title> Settings </v-list-item-title>
+            </v-list-item>
+          </v-list>
+      </v-menu>
     </v-toolbar>
       <div class="chat-window" ref="chat">
         <template v-for="(msg,i) of history" :key="`msg-${i}`">
@@ -28,9 +40,21 @@
         append-icon-inner="mdi-send"
         @click:append-inner="send_message"
         @keydown.enter.exact.prevent="send_message"
-        @keydown.enter.shift.exact.prevent="next_message += '\n'"
       />
     </v-responsive>
+    <v-dialog v-model="show_options_dialog" max-width="500" persistent>
+      <v-card>
+        <v-card-title> Options </v-card-title>
+        <v-card-text>
+          <v-text-field type="number" label="Response delay" v-model="options.reply_delay"/>
+          <v-text-field type="number" label="Typing delay" v-model="options.typing_delay"/>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="save_and_close_options"> Save </v-btn>
+          <v-btn> Discard </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <style @scoped>
@@ -62,10 +86,16 @@ import QuackerChatBubble from './QuackerChatBubble.vue';
         'Quack quack?',
         'Quack quack!'
       ],
-      delay: 1000,
+      typing_delay: 100,
+      reply_delay: 1000,
       is_typing: false,
       reply_timeout: null,
       typing_timeout: null,
+      show_options_dialog: false,
+      options: {
+        typing_delay: 100,
+        reply_delay: 1000,
+      }
     }),
     components: {
       QuackerChatBubble
@@ -78,8 +108,8 @@ import QuackerChatBubble from './QuackerChatBubble.vue';
         if (this.typing_timeout != null) {
           window.clearTimeout(this.typing_timeout);
         }
-        this.reply_timeout = setTimeout(this.reply_message,this.delay);
-        this.typing_timeout = setTimeout(this.typing_message,this.delay/2);
+        this.reply_timeout = setTimeout(this.reply_message,this.reply_delay);
+        this.typing_timeout = setTimeout(this.typing_message,this.typing_delay);
         this.history.push({
           side: 'right',
           text: this.next_message,
@@ -102,6 +132,27 @@ import QuackerChatBubble from './QuackerChatBubble.vue';
         this.$nextTick(()=>{
           this.$refs.chat.scrollTo(0,this.$refs.chat.scrollHeight);
         })
+      },
+      export_chat() {
+        const chatlog = this.history.map(v=>`${v.side == 'left' ? 'Quacker' : 'You'}: ${v.text}`).join('\n\n');
+        
+        const el = document.createElement('a');
+        el.setAttribute('download','chat.txt');
+        el.setAttribute('href',`data:text/plain;base64,${btoa(chatlog)}`);
+        el.click();
+        el.remove();
+      },
+      open_options_dialog(){
+        this.options.typing_delay = this.typing_delay;
+        this.options.reply_delay = this.reply_delay;
+      },
+      save_and_close_options() {
+        this.typing_delay = this.options.typing_delay;
+        this.options.reply_delay =  this.options.reply_delay;
+        this.show_options_dialog = false;
+      },
+      discard_and_close_options(){
+        this.show_options_dialog = false;
       }
     }
   }

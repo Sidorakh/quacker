@@ -19,11 +19,11 @@
       class="text-caption text-disabled"
       style="position: absolute; right: 16px;"
     >
-      &copy; 2024-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block">Andrew Rutherford</span>
+      &copy; 2025-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block">Andrew Rutherford</span>
       —
       <a
         class="text-decoration-none on-surface"
-        href="https://vuetifyjs.com/about/licensing/"
+        href="https://github.com/Sidorakh/quacker/blob/main/LICENSE"
         rel="noopener noreferrer"
         target="_blank"
       >
