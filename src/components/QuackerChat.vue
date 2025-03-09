@@ -3,45 +3,36 @@
     <v-responsive
       class="fill-height mx-auto chat-container"
       max-width="900"
-      height="100%"
+      height="100dvh"
     >
-    <v-toolbar>
-      <v-toolbar-title>
-        Quacker
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-menu>
-        <template v-slot:activator="{props}">
-          <v-btn icon v-bind="props">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-            <v-list-item @click="export_chat">
-              <v-list-item-title> Export chat </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="show_options_dialog=true">
-              <v-list-item-title> Settings </v-list-item-title>
-            </v-list-item>
-          </v-list>
-      </v-menu>
-    </v-toolbar>
+      <v-toolbar>
+        <v-toolbar-title>
+          Quacker
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-menu>
+          <template v-slot:activator="{props}">
+            <v-btn icon v-bind="props">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+              <v-list-item @click="export_chat">
+                <v-list-item-title> Export chat </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="show_options_dialog=true">
+                <v-list-item-title> Settings </v-list-item-title>
+              </v-list-item>
+            </v-list>
+        </v-menu>
+      </v-toolbar>
       <div class="chat-window" ref="chat">
         <template v-for="(msg,i) of history" :key="`msg-${i}`">
           <quacker-chat-bubble :text="msg.text" :side="msg.side"/>
         </template>
       </div>
-      <div :class="`fill-width ${is_typing ? 'text-base' : 'text-transparent'} mb-1`">
-        {{ is_typing ? 'Quacker is typing' : '.' }}
-      </div>
-      <v-text-field
-        v-model="next_message"
-        class="chat-input"
-        append-icon-inner="mdi-send"
-        @click:append-inner="send_message"
-        @keydown.enter.exact.prevent="send_message"
-      />
     </v-responsive>
+    
     <v-dialog v-model="show_options_dialog" max-width="500" persistent>
       <v-card>
         <v-card-title> Options </v-card-title>
@@ -55,6 +46,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-footer app>
+        <v-row>
+          <v-col v-if="!$vuetify.display.mobile" cols="3"/>
+          <v-col cols="12" md="6">
+            <div :class="`fill-width ${is_typing ? 'text-base' : 'text-transparent'} mb-1`">
+              {{ is_typing ? 'Quacker is typing' : '.' }}
+            </div>
+            <v-text-field
+              v-model="next_message"
+              class="chat-input"
+              append-inner-icon="mdi-send"
+              @click:append-inner="send_message"
+              @keydown.enter.exact.prevent="send_message"
+            />
+          </v-col>
+          <v-col v-if="!$vuetify.display.mobile" cols="3"/>
+        </v-row>
+    </v-footer>
   </v-container>
 </template>
 <style @scoped>
@@ -65,10 +74,11 @@
   .chat-input {
     position: sticky;
     top: 100%;
+    height:72px;
   }
   .chat-window {
     overflow-y: scroll;
-    height: 75vh;
+    height: 75dvh;
   }
 </style>
 <script>

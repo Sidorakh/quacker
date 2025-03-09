@@ -6,7 +6,9 @@
       <quacker-chat/>
     </v-main>
 
-    <AppFooter />
+    <!--
+      <AppFooter />
+    -->
   </v-app>
 </template>
 
