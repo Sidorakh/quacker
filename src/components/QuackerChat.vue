@@ -1,55 +1,38 @@
 <template>
-  <v-container class="fill-height">
-    <v-responsive
-      class="fill-height mx-auto chat-container"
-      max-width="900"
-      height="100dvh"
-    >
-      <v-toolbar>
-        <v-toolbar-title>
-          Quacker
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-menu>
-          <template v-slot:activator="{props}">
-            <v-btn icon v-bind="props">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-              <v-list-item @click="export_chat">
-                <v-list-item-title> Export chat </v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="show_options_dialog=true">
-                <v-list-item-title> Settings </v-list-item-title>
-              </v-list-item>
-            </v-list>
-        </v-menu>
-      </v-toolbar>
-      <div class="chat-window" ref="chat">
-        <template v-for="(msg,i) of history" :key="`msg-${i}`">
-          <quacker-chat-bubble :text="msg.text" :side="msg.side"/>
-        </template>
-      </div>
-    </v-responsive>
-    
-    <v-dialog v-model="show_options_dialog" max-width="500" persistent>
-      <v-card>
-        <v-card-title> Options </v-card-title>
-        <v-card-text>
-          <v-text-field type="number" label="Response delay" v-model="options.reply_delay"/>
-          <v-text-field type="number" label="Typing delay" v-model="options.typing_delay"/>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="save_and_close_options"> Save </v-btn>
-          <v-btn> Discard </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-footer app>
-        <v-row>
-          <v-col v-if="!$vuetify.display.mobile" cols="3"/>
-          <v-col cols="12" md="6">
+  <v-row>
+    <v-col v-if="!$vuetify.display.mobile" cols="3"/>
+    <v-col>
+      <div class="d-flex flex-column main-container">
+        <v-toolbar>
+          <v-toolbar-title>
+            Quacker
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-menu>
+            <template v-slot:activator="{props}">
+              <v-btn icon v-bind="props">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+                <v-list-item @click="export_chat">
+                  <v-list-item-title> Export chat </v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="show_options_dialog=true">
+                  <v-list-item-title> Settings </v-list-item-title>
+                </v-list-item>
+              </v-list>
+          </v-menu>
+        </v-toolbar>
+        <v-responsive>
+          <div class="chat-window" ref="chat">
+            <template v-for="(msg,i) of history" :key="`msg-${i}`">
+              <quacker-chat-bubble :text="msg.text" :side="msg.side"/>
+            </template>
+          </div>
+        </v-responsive>
+        <v-row width="100%">
+          <v-col cols="12" md="12">
             <div :class="`fill-width ${is_typing ? 'text-base' : 'text-transparent'} mb-1`">
               {{ is_typing ? 'Quacker is typing' : '.' }}
             </div>
@@ -61,10 +44,24 @@
               @keydown.enter.exact.prevent="send_message"
             />
           </v-col>
-          <v-col v-if="!$vuetify.display.mobile" cols="3"/>
         </v-row>
-    </v-footer>
-  </v-container>
+        <v-dialog v-model="show_options_dialog" max-width="500" persistent>
+          <v-card>
+            <v-card-title> Options </v-card-title>
+            <v-card-text>
+              <v-text-field type="number" label="Response delay" v-model="options.reply_delay"/>
+              <v-text-field type="number" label="Typing delay" v-model="options.typing_delay"/>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="save_and_close_options"> Save </v-btn>
+              <v-btn> Discard </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </div>
+    </v-col>
+    <v-col v-if="!$vuetify.display.mobile" cols="3"/>
+  </v-row>
 </template>
 <style @scoped>
   .chat-container {
@@ -79,6 +76,15 @@
   .chat-window {
     overflow-y: scroll;
     height: 75dvh;
+  }
+  .fill-responsive-height {
+    height: 100dvh;
+    align-items: start;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .main-container {
+    
   }
 </style>
 <script>

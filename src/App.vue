@@ -2,7 +2,7 @@
   <v-app>
     
 
-    <v-main>
+    <v-main style="">
       <quacker-chat/>
     </v-main>
 
